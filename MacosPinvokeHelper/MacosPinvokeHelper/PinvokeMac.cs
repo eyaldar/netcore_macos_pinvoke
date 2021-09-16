@@ -2,6 +2,9 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
+//TODO: figure out how to use NSEvent's keyEvent and mouseEvent
+//TODO: figure out how to implement types like CGRect
+//TODO: figure out how to use CGEventMouseEvent
 namespace MacosPinvokeHelper
 {
     public enum CGWindowListOption : uint {
