@@ -59,6 +59,23 @@ namespace MacosPinvokeHelper
             }
         }
 
+        public static void NSArrayForeach(IntPtr array, Action<IntPtr> action)
+        {
+            int itemCount = objc_msgSend_retInt(
+                array,
+                GetSelector("count"));
+
+            for (int i = 0; i < itemCount; i++)
+            {
+                var item = PinvokeMac.objc_msgSend_retIntPtr_IntPtr(
+                    array,
+                    GetSelector("objectAtIndex:"),
+                    (IntPtr)i);
+
+                action(item);
+            }
+        }
+
         public static string NSStringToUTF8String(IntPtr nsString)
         {
             var strPtr = PinvokeMac.objc_msgSend_retIntPtr(
@@ -88,6 +105,9 @@ namespace MacosPinvokeHelper
 
         [DllImport(FoundationFramework, EntryPoint = "objc_msgSend")]
         public static extern int objc_msgSend_retInt(IntPtr target, IntPtr selector);
+
+        [DllImport(FoundationFramework, EntryPoint = "objc_msgSend")]
+        public static extern int objc_msgSend_retInt(IntPtr target, IntPtr selector, IntPtr param1);
 
         [DllImport(FoundationFramework, EntryPoint = "objc_msgSend")]
         public static extern IntPtr objc_msgSend_retIntPtr(IntPtr target, IntPtr selector);

@@ -29,6 +29,29 @@ namespace MacosPinvokeHelper
             }
         }
 
+        public IntPtr[] VisibleWindows 
+        {
+            get 
+            {
+                var windowInfoPtr = PinvokeMac.CGWindowListCopyWindowInfo(CGWindowListOption.OnScreenOnly, 0);
+
+                PinvokeMac.NSArrayForeach(windowInfoPtr, (windowDataPtr) =>
+                {
+                    var kCGWindowBoundsKey = PinvokeMac.CreateCFString("kCGWindowBounds");
+                    var rect = PinvokeMac.objc_msgSend_retIntPtr_IntPtr(
+                        windowDataPtr,
+                        PinvokeMac.GetSelector("valueForKey:"),
+                        kCGWindowBoundsKey);
+
+                    Console.WriteLine(rect);
+                    PinvokeMac.CFRelease(kCGWindowBoundsKey);
+                    PinvokeMac.CFRelease(rect);
+                });
+
+                return new IntPtr[0];
+            }
+        }
+
         public IntPtr[] VisibleApplications
         {
             get
@@ -38,16 +61,9 @@ namespace MacosPinvokeHelper
                 var runningApplications = PinvokeMac.objc_msgSend_retIntPtr(
                     SharedWorkspace,
                     PinvokeMac.GetSelector("runningApplications"));
-                int runningApplicationCount = PinvokeMac.objc_msgSend_retInt(
-                    runningApplications,
-                    PinvokeMac.GetSelector("count"));
 
-                for (int i = 0; i < runningApplicationCount; i++)
+                PinvokeMac.NSArrayForeach(runningApplications, (appPtr) =>
                 {
-                    var appPtr = PinvokeMac.objc_msgSend_retIntPtr_IntPtr(
-                        runningApplications,
-                        PinvokeMac.GetSelector("objectAtIndex:"),
-                        (IntPtr)i);
                     var activityPolicy = PinvokeMac.objc_msgSend_retInt(
                         appPtr,
                         PinvokeMac.GetSelector("activationPolicy"));
@@ -56,7 +72,7 @@ namespace MacosPinvokeHelper
                     {
                         list.Add(appPtr);
                     }
-                }
+                });
 
                 PinvokeMac.CFRelease(runningApplications);
 

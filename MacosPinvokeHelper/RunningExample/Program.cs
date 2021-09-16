@@ -1,5 +1,4 @@
 ﻿using System;
-using MacosPinvokeHelper;
 
 namespace RunningExample
 {
@@ -7,6 +6,7 @@ namespace RunningExample
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("------------------- PINVOKE -----------------------------");
             using (var macWindowHelper = new MacWindowHelper())
             {
                 // All visible applications
@@ -22,6 +22,10 @@ namespace RunningExample
 
                 Console.WriteLine($"Application name: {macWindowHelper.GetApplicationName(frontmostApplication)}");
                 Console.WriteLine($"- Active: {macWindowHelper.IsApplicationActive(frontmostApplication)}");
+
+                // VisibleWindows
+                Console.WriteLine("----------------------- Visible Windows ---------------------");
+                var a = macWindowHelper.VisibleWindows;
             }
         }
     }
