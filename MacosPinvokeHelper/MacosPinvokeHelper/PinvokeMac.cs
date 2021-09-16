@@ -4,6 +4,29 @@ using System.Text;
 
 namespace MacosPinvokeHelper
 {
+    public enum CGWindowListOption : uint {
+        All = 0,
+        OnScreenOnly = 1,
+        OnScreenAboveWindow = 2,
+        OnScreenBelowWindow = 4,
+        IncludingWindow = 8,
+        ExcludeDesktopElements = 16
+    }
+
+    public enum CFStringEncoding : uint
+    {
+        UTF16 = 0x0100,
+        UTF16BE = 0x10000100,
+        UTF16LE = 0x14000100,
+        ASCII = 0x0600
+    }
+
+    public enum ApplicationPolicy : uint {
+        Regular = 0,
+        Accessory = 1,
+        Prohibited = 2
+    }
+
     public static class PinvokeMac
     {
         public static IntPtr GetSelector(string name)
@@ -78,12 +101,7 @@ namespace MacosPinvokeHelper
         [DllImport(FoundationFramework, EntryPoint = "objc_msgSend")]
         public static extern void objc_msgSend_retVoid(IntPtr target, IntPtr selector);
 
-        public enum CFStringEncoding : uint
-        {
-            UTF16 = 0x0100,
-            UTF16BE = 0x10000100,
-            UTF16LE = 0x14000100,
-            ASCII = 0x0600
-        }
+        [DllImport(@"/System/Library/Frameworks/QuartzCore.framework/QuartzCore")]
+        public static extern IntPtr CGWindowListCopyWindowInfo(CGWindowListOption option, uint relativeToWindow);
     }
 }

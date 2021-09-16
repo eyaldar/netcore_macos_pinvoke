@@ -52,7 +52,7 @@ namespace MacosPinvokeHelper
                         appPtr,
                         PinvokeMac.GetSelector("activationPolicy"));
 
-                    if (activityPolicy == 0)
+                    if (activityPolicy == (int)ApplicationPolicy.Regular)
                     {
                         list.Add(appPtr);
                     }
