@@ -7,5 +7,5 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MacosPinvokeHelper\MacosPinvokeHelper.csproj" />
-  </ItemGroup>
+  </ItemGroup> 
 </Project>

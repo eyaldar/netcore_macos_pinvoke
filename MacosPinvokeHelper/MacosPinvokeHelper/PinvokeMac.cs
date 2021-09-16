@@ -95,6 +95,15 @@ namespace MacosPinvokeHelper
         public static extern IntPtr CFArrayCreate(IntPtr allocator, IntPtr values, long numValues, IntPtr callbackStruct);
 
         [DllImport(FoundationFramework)]
+        public static extern IntPtr CFBooleanGetValue(IntPtr boolean);
+
+        [DllImport(FoundationFramework)]
+        public static extern int CFNumberGetValue(IntPtr number, IntPtr theType, out int castedNumber);
+
+        [DllImport(FoundationFramework)]
+        public static extern IntPtr CFStringGetCStringPtr(IntPtr cfStrRef, IntPtr encodingMethod);
+
+        [DllImport(FoundationFramework)]
         public static extern void CFRetain(IntPtr handle);
 
         [DllImport(FoundationFramework)]
