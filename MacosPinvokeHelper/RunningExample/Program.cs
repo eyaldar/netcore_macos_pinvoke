@@ -37,6 +37,11 @@ namespace RunningExample
                 // VisibleWindows
                 Console.WriteLine("----------------------- Visible Windows ---------------------");
                 macWindowHelper.VisibleWindows(pids);
+
+                Console.WriteLine("----------------------- GetApplicationPidByMouseLocation ---------------------");
+                var pidUnderMouse = macWindowHelper.GetApplicationPidByMouseLocation(pids);
+                var applicationUnderMouse = macWindowHelper.GetApplicationByPid(pidUnderMouse);
+                PrintApplicationData(macWindowHelper, applicationUnderMouse);
             }
         }
     }

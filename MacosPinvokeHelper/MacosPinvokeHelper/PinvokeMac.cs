@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using CoreGraphics;
 
 //TODO: figure out how to use NSEvent's keyEvent and mouseEvent
 //TODO: figure out how to implement types like CGRect
@@ -131,9 +132,18 @@ namespace MacosPinvokeHelper
         public static extern IntPtr objc_msgSend_retIntPtr_IntPtr(IntPtr target, IntPtr selector, IntPtr param);
 
         [DllImport(FoundationFramework, EntryPoint = "objc_msgSend")]
+        public static extern IntPtr objc_msgSend_retIntPtr_IntPtr(IntPtr target, IntPtr selector, IntPtr param1, IntPtr param2);
+
+        [DllImport(FoundationFramework, EntryPoint = "objc_msgSend")]
         public static extern void objc_msgSend_retVoid(IntPtr target, IntPtr selector);
 
         [DllImport(@"/System/Library/Frameworks/QuartzCore.framework/QuartzCore")]
         public static extern IntPtr CGWindowListCopyWindowInfo(CGWindowListOption option, uint relativeToWindow);
+
+        [DllImport(@"/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics")]
+        public static extern IntPtr CGEventCreate(IntPtr source);
+
+        [DllImport(@"/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics")]
+        public static extern CGPoint CGEventGetLocation(IntPtr ev);
     }
 }

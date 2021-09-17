@@ -8,10 +8,16 @@ namespace MacosPinvokeHelper
     public class MacWindowHelper : IDisposable
     {
         public static readonly IntPtr NSWorkspaceClass;
+        public static readonly IntPtr NSEvent;
+        public static readonly IntPtr NSWindow;
+        public static readonly IntPtr NSRunningApplication;
 
         static MacWindowHelper()
         {
+            NSEvent = PinvokeMac.objc_getClass("NSEvent");
             NSWorkspaceClass = PinvokeMac.objc_getClass("NSWorkspace");
+            NSWindow = PinvokeMac.objc_getClass("NSWindow");
+            NSRunningApplication = PinvokeMac.objc_getClass("NSRunningApplication");
         }
 
         private IntPtr sharedWorkspace;
@@ -146,6 +152,66 @@ namespace MacosPinvokeHelper
                 PinvokeMac.GetSelector("isActive"));
 
             return isActive == 1;
+        }
+
+        public IntPtr GetApplicationByPid(int pid)
+        {
+            return PinvokeMac.objc_msgSend_retIntPtr_IntPtr(
+                NSRunningApplication,
+                PinvokeMac.GetSelector("runningApplicationWithProcessIdentifier:"),
+                (IntPtr)pid);
+        }
+
+        public CGPoint GetMouseLocation()
+        {
+            var ev = PinvokeMac.CGEventCreate(IntPtr.Zero);
+            var point = PinvokeMac.CGEventGetLocation(ev);
+
+            PinvokeMac.CFRelease(ev);
+
+            return point;
+        }
+
+        public int GetApplicationPidByMouseLocation(HashSet<int> relevantPids)
+        {
+            CGPoint mouseLocation = GetMouseLocation();
+
+            var windowInfoPtr = PinvokeMac.CGWindowListCopyWindowInfo(CGWindowListOption.OnScreenOnly | CGWindowListOption.ExcludeDesktopElements, 0);
+            int selectedPid = 0;
+
+            PinvokeMac.NSArrayForeach(windowInfoPtr, (windowDataPtr) =>
+            {
+                var kCGWindowOwnerPID = PinvokeMac.CreateCFString("kCGWindowOwnerPID");
+                var ownerPidCFNumber = PinvokeMac.objc_msgSend_retIntPtr_IntPtr(
+                    windowDataPtr,
+                    PinvokeMac.GetSelector("valueForKey:"),
+                    kCGWindowOwnerPID);
+                PinvokeMac.CFNumberGetValue(ownerPidCFNumber, (IntPtr)9, out int ownerPid);
+
+                PinvokeMac.CFRelease(kCGWindowOwnerPID);
+
+                if (!relevantPids.Contains(ownerPid) || selectedPid != 0)
+                {
+                    return;
+                }
+
+                var kCGWindowBoundsKey = PinvokeMac.CreateCFString("kCGWindowBounds");
+                var rect = PinvokeMac.objc_msgSend_retIntPtr_IntPtr(
+                    windowDataPtr,
+                    PinvokeMac.GetSelector("valueForKey:"),
+                    kCGWindowBoundsKey);
+
+                NativeDrawingMethods.CGRectMakeWithDictionaryRepresentation(rect, out CGRect cgRect);
+
+                if(cgRect.Contains(mouseLocation))
+                {
+                    selectedPid = ownerPid;
+                }
+            });
+
+            PinvokeMac.CFRelease(windowInfoPtr);
+
+            return selectedPid;
         }
 
         #region Disposable Pattern
